@@ -62,6 +62,7 @@ function modifier(x)
 function Item(i)
 {
 	this.type = 'mundaneitem';
+	this.name = i.name;
 	this.cost = i.cost === undefined ? 1 : i.cost;
 	this.weight = i.weight === undefined ? 0 : i.weight;
 	this.count = i.count === undefined ? 1 : i.count;
@@ -71,7 +72,6 @@ function Weapon(w)
 {
 	Item.call(this, w);
 	this.type = 'weapon';
-	this.name = w.name;
 	this.ranged = w.ranged === undefined ? false : w.ranged;
 	this.ammunition = w.ammunition === undefined ? false : w.ammunition;
 	this.finesse = w.finesse === undefined ? false : w.finesse;
@@ -88,6 +88,16 @@ function Weapon(w)
 	this.simple = w.simple === undefined ? true : w.simple;
 	this.bonus = w.bonus;
 }
+
+function duplicate(item)
+{
+	if (item.type === 'mundaneitem')
+		return new Item(item);
+	if (item.type === 'weapon')
+		return new Weapon(item);
+	throw new Error("Unknown item type "+item.type);
+}
+
 Object.defineProperty(Weapon.prototype, 'melee', {
 	enumerable:true,
 	get() {
@@ -178,6 +188,147 @@ weapons.push(new Weapon({name:'Crossbow, heavy',cost:5000,damage:[{piercing:'1d1
 weapons.push(new Weapon({name:'Longbow',cost:5000,damage:[{piercing:'1d8'}],weight:2,simple:false,ranged:true,ammunition:true,range:'150/600',heavy:true,twohanded:true}));
 weapons.push(new Weapon({name:'Net',cost:100,weight:3,simple:false,ranged:true,thrown:true,range:'5/15',special:'A Large or smaller creature hit by a net is Restrained until it is freed. A net has no effect on creatures that are formless, or creatures that are Huge or larger. A creature can use its action to make a DC 10 Strength check, freeing itself or another creature within its reach on a success. Dealing 5 slashing damage to the net (AC 10) also frees the creature without harming it, ending the effect and destroying the net.\nWhen you use an action, bonus action, or reaction to attack with a net, you can make only one attack regardless of the number of attacks you can normally make.'}));
 
+var items = [];
+items.push(new Item({name:"Abacus",cost:200,weight:2}));
+items.push(new Item({name:"Acid (vial)",cost:2500,weight:1}));
+items.push(new Item({name:"Alchemist’s fire (flask)",cost:5000,weight:1}));
+items.push(new Item({name:"Arrows (20)",cost:100,weight:1}));
+items.push(new Item({name:"Blowgun needles (5)",cost:100,weight:1}));
+items.push(new Item({name:"Crossbow bolts (20)",cost:100,weight:1.5}));
+items.push(new Item({name:"Sling bullets (20)",cost:4,weight:1.5}));
+items.push(new Item({name:"Antitoxin (vial)",cost:5000}));
+items.push(new Item({name:"Crystal (arcane focus)",cost:1000,weight:1}));
+items.push(new Item({name:"Orb (arcane focus)",cost:2000,weight:3}));
+items.push(new Item({name:"Rod (arcane focus)",cost:1000,weight:2}));
+items.push(new Item({name:"Staff (arcane focus)",cost:500,weight:4}));
+items.push(new Item({name:"Wand (arcane focus)",cost:1000,weight:1}));
+items.push(new Item({name:"Backpack",cost:200,weight:5}));
+items.push(new Item({name:"Ball bearings (bag of 1,000)",cost:100,weight:2}));
+items.push(new Item({name:"Barrel",cost:200,weight:70}));
+items.push(new Item({name:"Basket",cost:40,weight:2}));
+items.push(new Item({name:"Bedroll",cost:100,weight:7}));
+items.push(new Item({name:"Bell",cost:100}));
+items.push(new Item({name:"Blanket",cost:50,weight:3}));
+items.push(new Item({name:"Block and tackle",cost:100,weight:5}));
+items.push(new Item({name:"Book",cost:2500,weight:5}));
+items.push(new Item({name:"Bottle, glass",cost:200,weight:2}));
+items.push(new Item({name:"Bucket",cost:5,weight:2}));
+items.push(new Item({name:"Caltrops (bag of 20)",cost:100,weight:2}));
+items.push(new Item({name:"Candle",cost:1}));
+items.push(new Item({name:"Case, crossbow bolt",cost:100,weight:1}));
+items.push(new Item({name:"Case, map or scroll",cost:100,weight:1}));
+items.push(new Item({name:"Chain (10 feet)",cost:500,weight:10}));
+items.push(new Item({name:"Chalk (1 piece)",cost:1}));
+items.push(new Item({name:"Chest",cost:500,weight:25}));
+items.push(new Item({name:"Climber’s kit",cost:2500,weight:12}));
+items.push(new Item({name:"Clothes, common",cost:50,weight:3}));
+items.push(new Item({name:"Clothes, costume",cost:500,weight:4}));
+items.push(new Item({name:"Clothes, fine",cost:1500,weight:6}));
+items.push(new Item({name:"Clothes, traveler’s",cost:200,weight:4}));
+items.push(new Item({name:"Component pouch",cost:2500,weight:2}));
+items.push(new Item({name:"Crowbar",cost:200,weight:5}));
+items.push(new Item({name:"Sprig of mistletoe (druidic focus)",cost:100}));
+items.push(new Item({name:"Totem (druidic focus)",cost:100}));
+items.push(new Item({name:"Wooden staff (druidic focus)",cost:500,weight:4}));
+items.push(new Item({name:"Yew wand (druidic focus)",cost:1000,weight:1}));
+items.push(new Item({name:"Fishing tackle",cost:100,weight:4}));
+items.push(new Item({name:"Flask or tankard",cost:2,weight:1}));
+items.push(new Item({name:"Grappling hook",cost:200,weight:4}));
+items.push(new Item({name:"Hammer",cost:100,weight:3}));
+items.push(new Item({name:"Hammer, sledge",cost:200,weight:10}));
+items.push(new Item({name:"Healer’s kit",cost:500,weight:3}));
+items.push(new Item({name:"Amulet (holy symbol)",cost:500,weight:1}));
+items.push(new Item({name:"Emblem (holy symbol)",cost:500}));
+items.push(new Item({name:"Reliquary (holy symbol)",cost:500,weight:2}));
+items.push(new Item({name:"Holy water (flask)",cost:2500,weight:1}));
+items.push(new Item({name:"Hourglass",cost:2500,weight:1}));
+items.push(new Item({name:"Hunting trap",cost:500,weight:25}));
+items.push(new Item({name:"Ink (1 ounce bottle)",cost:1000}));
+items.push(new Item({name:"Ink pen",cost:2}));
+items.push(new Item({name:"Jug or pitcher",cost:2,weight:4}));
+items.push(new Item({name:"Ladder (10-foot)",cost:10,weight:25}));
+items.push(new Item({name:"Lamp",cost:50,weight:1}));
+items.push(new Item({name:"Lantern, bullseye",cost:1000,weight:2}));
+items.push(new Item({name:"Lantern, hooded",cost:500,weight:2}));
+items.push(new Item({name:"Lock",cost:1000,weight:1}));
+items.push(new Item({name:"Magnifying glass",cost:10000}));
+items.push(new Item({name:"Manacles",cost:200,weight:6}));
+items.push(new Item({name:"Mess kit",cost:20,weight:1}));
+items.push(new Item({name:"Mirror, steel",cost:500,weight:0.5}));
+items.push(new Item({name:"Oil (flask)",cost:10,weight:1}));
+items.push(new Item({name:"Paper (one sheet)",cost:20}));
+items.push(new Item({name:"Parchment (one sheet)",cost:10}));
+items.push(new Item({name:"Perfume (vial)",cost:500}));
+items.push(new Item({name:"Pick, miner’s",cost:200,weight:10}));
+items.push(new Item({name:"Piton",cost:5,weight:0.25}));
+items.push(new Item({name:"Poison, basic (vial)",cost:10000}));
+items.push(new Item({name:"Pole (10-foot)",cost:5,weight:7}));
+items.push(new Item({name:"Pot, iron",cost:200,weight:10}));
+items.push(new Item({name:"Potion of healing",cost:5000,weight:0.5}));
+items.push(new Item({name:"Pouch",cost:50,weight:1}));
+items.push(new Item({name:"Quiver",cost:100,weight:1}));
+items.push(new Item({name:"Ram, portable",cost:400,weight:35}));
+items.push(new Item({name:"Rations (1 day)",cost:50,weight:2}));
+items.push(new Item({name:"Robes",cost:100,weight:4}));
+items.push(new Item({name:"Rope, hempen (50 feet)",cost:100,weight:10}));
+items.push(new Item({name:"Rope, silk (50 feet)",cost:1000,weight:5}));
+items.push(new Item({name:"Sack",cost:1,weight:0.5}));
+items.push(new Item({name:"Scale, merchant’s",cost:500,weight:3}));
+items.push(new Item({name:"Sealing wax",cost:50}));
+items.push(new Item({name:"Shovel",cost:200,weight:5}));
+items.push(new Item({name:"Signal whistle",cost:5}));
+items.push(new Item({name:"Signet ring",cost:500}));
+items.push(new Item({name:"Soap",cost:2}));
+items.push(new Item({name:"Spellbook",cost:5000,weight:3}));
+items.push(new Item({name:"Spikes, iron (10)",cost:100,weight:5}));
+items.push(new Item({name:"Spyglass",cost:100000,weight:1}));
+items.push(new Item({name:"Tent, two-person",cost:200,weight:20}));
+items.push(new Item({name:"Tinderbox",cost:50,weight:1}));
+items.push(new Item({name:"Torch",cost:1,weight:1}));
+items.push(new Item({name:"Vial",cost:100}));
+items.push(new Item({name:"Waterskin",cost:20,weight:5}));
+items.push(new Item({name:"Whetstone",cost:1,weight:1}));
+
+// TODO: Allow containers...
+var packs={
+	Burglar:[],
+	Diplomat:[],
+	Dungeoneer:[],
+	Entertainer:[],
+	Explorer:[],
+	Priest:[],
+	Scholar:[]
+};
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Backpack'})));
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Ball bearings (bag of 1,000)'})));
+packs.Burglar.push(new Item({name:"10 feet of string"}));
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Bell'})));
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Candle'})));
+packs.Burglar[packs.Burglar.length-1].count=5;
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Crowbar'})));
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Hammer'})));
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Piton'})));
+packs.Burglar[packs.Burglar.length-1].count=10;
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Lantern, hooded'})));
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Oil (flask)'})));
+packs.Burglar[packs.Burglar.length-1].count=2;
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Rations (1 day)'})));
+packs.Burglar[packs.Burglar.length-1].count=5;
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Tinderbox'})));
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Waterskin'})));
+packs.Burglar.push(new Item(items.find(item=>{return item.name==='Rope, hempen (50 feet)'})));
+// TODO: More packs!
+packs.Explorer.push(new Item(items.find(item=>{return item.name==='Backpack'})));
+packs.Explorer.push(new Item(items.find(item=>{return item.name==='Bedroll'})));
+packs.Explorer.push(new Item(items.find(item=>{return item.name==='Mess kit'})));
+packs.Explorer.push(new Item(items.find(item=>{return item.name==='Tinderbox'})));
+packs.Explorer.push(new Item(items.find(item=>{return item.name==='Torch'})));
+packs.Explorer[packs.Explorer.length-1].count=10;
+packs.Explorer.push(new Item(items.find(item=>{return item.name==='Rations (1 day)'})));
+packs.Explorer[packs.Explorer.length-1].count=10;
+packs.Explorer.push(new Item(items.find(item=>{return item.name==='Waterskin'})));
+packs.Explorer.push(new Item(items.find(item=>{return item.name==='Rope, hempen (50 feet)'})));
+
 function Character()
 {
 	var sbase = localStorage.getItem('cs_base');
@@ -231,6 +382,7 @@ function Character()
 Character.prototype.recalc = function()
 {
 	var i;
+	var flag;
 	var calc;
 
 	function setSaveProf(name, value) {
@@ -273,22 +425,6 @@ Character.prototype.recalc = function()
 		return true;
 	}
 
-	function addWeapon(name, count) {
-		if (count === undefined)
-			count = 1;
-		var cur = calc.equipment.find(item => {return item.name === name});
-
-		if (cur === undefined) {
-			var weap = new Weapon(weapons.find(w => {return w.name === name}));
-			weap.count = count;
-			calc.equipment.push(weap);
-		}
-		else
-			cur.count += count;
-
-		return true;
-	}
-
 	function choose(num, title, prompt, options)
 	{
 		var e = document.getElementById("modal-header");
@@ -319,7 +455,7 @@ Character.prototype.recalc = function()
 			else
 				e.style.display="inline";
 			e = document.getElementById("modal-body");
-			ih = '<form id="simpleinputform" onsubmit="if(verifyChoose(false)===false) return false;modalclose();window.setTimeout(function(){updatepage();},0);" action="#"><p>'+prompt + '<br>';
+			ih = '<form id="simpleinputform" onsubmit="return false;" action="#"><p>'+prompt + '<br>';
 			for (i in options) {
 				ih += '<input type="checkbox" id="choose-'+i+'"> <label for="choose-'+i+'">'+options[i].name+'</label><br>';
 			}
@@ -389,23 +525,32 @@ Character.prototype.recalc = function()
 	this.weaponproficiencies = new Proxy(calc.weaponproficiencies, roHandler);
 	this.armorproficiencies = new Proxy(calc.armorproficiencies, roHandler);
 	this.otherproficiencies = new Proxy(calc.otherproficiencies, roHandler);
+
+	flag = false;
 	for (changesOffset in this.base.changes) {
 		if (!eval(this.base.changes[changesOffset])) {
 			changesOffset = -1;
-			break;
+			return false;
 		}
 	}
+
+	for (i in applyClassLevels) {
+		flag = true;
+		if (applyClassLevel(applyClassLevels[i]) === false) {
+			return false;
+		}
+		else {
+			applyClassLevels.splice(i, 1);
+		}
+	}
+	if (flag)
+		this.recalc();
+
 	// Testing...
 	calc.languages.push('Common');
 	calc.speed = 30;
-	calc.remaininghd['d10']=1;
-	calc.remaininghd['d8']=1;
-	if (this.base.remaininghd.length <= 0) {
-		this.base.remaininghd['d10']=1;
-		this.base.remaininghd['d8']=1;
-	}
-	calc.deathsaves = 2;
-	calc.deathfailures = 1;
+
+	return true;
 };
 
 var simpleprops = [
@@ -571,7 +716,10 @@ function updatepage()
 	var k;
 	var tmpstr;
 
-	c.recalc();
+	if (!c.recalc()) {
+		verifybase();
+		return;
+	}
 	document.getElementById("name").value=c.name;
 	document.getElementById("classlevel").value=c.classlevel;
 	document.getElementById("background").value=c.background;
@@ -684,7 +832,6 @@ function verifybase()
 		// Waiting for choices.
 	}
 	else {
-		applyClassLevels.forEach(cl=>{applyClassLevel(cl)});
 		localStorage.setItem('cs_base', JSON.stringify(c.base));
 	}
 }
@@ -705,7 +852,7 @@ function simpleinput(title, prompt, action, cancel)
 	else
 		e.style.display="inline";
 	e = document.getElementById("modal-body");
-	e.innerHTML='<form id="simpleinputform" onsubmit="' + action + ';return false;" action="#"><p>'+prompt + ' <input id="modalinput" type="text" name="simpleinput"></p><div class="modal-button"><button onclick="' + action + '">Ok</button></div></form>';
+	e.innerHTML='<form id="simpleinputform" onsubmit="return false;" action="#"><p>'+prompt + ' <input id="modalinput" type="text" name="simpleinput"></p><div class="modal-button"><button onclick="' + action + '">Ok</button></div></form>';
 	e = document.getElementById('modal');
 	e.style.display="block";
 	document.getElementById('modalinput').focus();
@@ -724,7 +871,7 @@ function dropdown(title, prompt, options, action, cancel)
 	else
 		e.style.display="inline";
 	e = document.getElementById("modal-body");
-	ih = '<form id="simpleinputform" onsubmit="' + action + ';return false;" action="#"><p>'+prompt + ' <select id="modalinput">';
+	ih = '<form id="simpleinputform" onsubmit="return false;" action="#"><p>'+prompt + ' <select id="modalinput">';
 	for (i in options) {
 		ih += '<option value="'+options[i]+'">'+options[i]+'</option>';
 	}
@@ -735,6 +882,32 @@ function dropdown(title, prompt, options, action, cancel)
 	document.getElementById('modalinput').focus();
 }
 
+function addCurrHP(hp)
+{
+	var newhp;
+
+	newhp = c.currenthp + hp;
+	if (newhp > c.maxhp)
+		newhp = c.maxhp;
+	c.base.currenthp = newhp;
+	c.calculated.currenthp = newhp;
+}
+
+function addCurrHD(count, hd)
+{
+	var newhd;
+
+	if (c.calculated.totalhd[hd] === undefined)
+		throw new Error("Character has no "+hd+" hit dice");
+	newhd = c.calculated.remaininghd[hd];
+	if (newhd === undefined)
+		newhd = 0;
+	newhd += count;
+	if (newhd > c.calculated.totalhd[hd])
+		newhd = c.calculated.totalhd[hd];
+	c.base.remaininghd[hd] = newhd;
+	c.calculated.remaininghd[hd] = newhd;
+}
 
 var c = new Character();
 updatepage(c);
@@ -755,14 +928,16 @@ var classes = {
 					'setSaveProf("str", 1)',
 					'setSaveProf("con", 1)',
 					'choose(2, "Skills", "Choose two skills", [{name:\'Animal Handling\',eval:\'setSkillProf(\"animalhandling\", 1)\'},{name:\'Athletics\',eval:\'setSkillProf(\"athletics\", 1)\'},{name:\'Intimidation\',eval:\'setSkillProf(\"intimidation\", 1)\'},{name:\'Nature\',eval:\'setSkillProf(\"nature\", 1)\'},{name:\'Perception\',eval:\'setSkillProf(\"perception\", 1)\'},{name:\'Survival\',eval:\'setSkillProf(\"survival\", 1)\'}])',
-					'choose(2)',
-					'choose(1, "Melee Weapon", "Choose a greataxe or any martial melee weapon.", weapons.filter(function (entry) { return entry.melee && entry.martial }).map(function(element) {return {name:element.name,eval:"addWeapon(\'"+element.name+"\')"}}))',
-					'choose(1, "Simple Weapon", "Choose two handaxes or any simple weapon.", [{name:"Two handaxes",eval:"addWeapon(\'Handaxe\', 2)"}].concat(weapons.filter(function (entry) { return entry.simple }).map(function(element) {return {name:element.name,eval:"addWeapon(\'"+element.name+"\')"}})))'
+					'choose(2)'
 				],
 				immediate:[
+					'choose(1, "Melee Weapon", "Choose a greataxe or any martial melee weapon.", weapons.filter(function (entry) { return entry.melee && entry.martial }).map(function(element) {return {name:element.name,eval:"addWeapon(\'"+element.name+"\')"}}))',
+					'choose(1, "Simple Weapon", "Choose two handaxes or any simple weapon.", [{name:"Two handaxes",eval:"addWeapon(\'Handaxe\', 2)"}].concat(weapons.filter(function (entry) { return entry.simple }).map(function(element) {return {name:element.name,eval:"addWeapon(\'"+element.name+"\')"}})))',
+					'addPack("Explorer")',
+					'addWeapon("Javelin", 4)',
 					'addCurrHP(12); true',
 					'addCurrHP(c.Constitutionmod); true',
-					'addCurrHD("d12")',
+					'addCurrHD(1, "d12")'
 				]
 			}
 		}
@@ -782,8 +957,107 @@ function addClassLevel(cl)
 		c.base.classes.push(o);
 	}
 	o.level++;
-	applyClassLevels.push({name:cl,level:o.level});
 	classes[cl].level[o.level].changes.forEach(change=>{c.base.changes.push(change)});
+	applyClassLevels.push({name:cl,level:o.level,index:0});
+}
+
+function applyClassLevel(cl)
+{
+	var lvl;
+
+	function addItem(item, count) {
+		if (count === undefined)
+			count = 1;
+		var cur = c.base.equipment.find(fitem => {return fitem.name === item.name});
+
+		if (cur === undefined)
+			c.base.equipment.push(duplicate(item));
+		else
+			cur.count += count;
+
+		return true;
+	}
+
+	function addWeapon(name, count) {
+		if (count === undefined)
+			count = 1;
+		var cur = c.base.equipment.find(item => {return item.name === name});
+
+		if (cur === undefined) {
+			var weap = new Weapon(weapons.find(w => {return w.name === name}));
+			weap.count = count;
+			c.base.equipment.push(weap);
+		}
+		else
+			cur.count += count;
+
+		return true;
+	}
+
+	function addPack(name) {
+		if (packs[name] === undefined)
+			throw new Error("Undefined pack "+name);
+		packs[name].forEach(item=>{addItem(item)});
+	}
+
+	function choose(num, title, prompt, options)
+	{
+		var e = document.getElementById("modal-header");
+		var ih;
+		var i;
+		var cancel = false;
+
+		if (document.getElementById('choose') !== null) {
+			if (document.getElementById('modal').style.display === 'none') {
+				var opts = verifyChoose(true);
+				if (opts === false)
+					return false;
+				for (i=0; i<opts.length; i++) {
+					eval(options[opts[i]].eval);
+				}
+				document.getElementById('modal-body').innerHTML = '';
+
+				return true;
+			}
+			return false;
+		}
+		else {
+			e.innerHTML = title;
+			e = document.getElementById("modal-close");
+			if (cancel === undefined || cancel === false)
+				e.style.display="none";
+			else
+				e.style.display="inline";
+			e = document.getElementById("modal-body");
+			ih = '<form id="simpleinputform" onsubmit="return false;" action="#"><p>'+prompt + '<br>';
+			for (i in options) {
+				ih += '<input type="checkbox" id="choose-'+i+'"> <label for="choose-'+i+'">'+options[i].name+'</label><br>';
+			}
+			ih += '<input type="hidden" value="'+num+'" id="choose"><input type="hidden" value="'+options.length+'" id="choices"></p><div class="modal-button"><button onclick="if(verifyChoose(false)===false) return false;modalclose();window.setTimeout(function(){updatepage();},0);">Ok</button></div></form>';
+			e.innerHTML=ih;
+			e = document.getElementById('modal');
+			e.style.display="block";
+			document.getElementById('choose-0').focus();
+
+			return false;
+		}
+	}
+
+	if (cl.index === -1)
+		return true;
+
+	if (classes[cl.name] === undefined)
+		throw new Error("Unknown class: "+name);
+	lvl = classes[cl.name].level[cl.level].immediate;
+	for (changesOffset=cl.index; changesOffset<lvl.length; changesOffset++) {
+		if (eval(lvl[changesOffset]) === false) {
+			cl.index = changesOffset;
+			changesOffset = -1;
+			return false;
+		}
+	}
+	cl.index = -1;
+	return true;
 }
 
 function verifyChoose(returnArray)
